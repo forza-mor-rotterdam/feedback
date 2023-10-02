@@ -3,7 +3,7 @@
 Voor het verwerken van Feedback van Meldingen Openbare Ruimte
 
 ## Tech Stack
-[Turbo JS](https://turbo.hotwired.dev/), [SCSS](https://sass-lang.com/) 
+[Turbo JS](https://turbo.hotwired.dev/), [SCSS](https://sass-lang.com/)
 
 ## Get Started 🚀
 To get started, install [Docker](https://www.docker.com/)

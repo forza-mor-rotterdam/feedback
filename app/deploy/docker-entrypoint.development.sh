@@ -3,6 +3,8 @@ set -u   # crash on missing env variables
 set -e   # stop on any error
 set -x
 
+rm -rf /static/*
+
 # echo "Start with a fresh database"
 # export PGPASSWORD=${DATABASE_PASSWORD}
 # psql -h ${DATABASE_HOST_OVERRIDE} -p 5432 -d ${DATABASE_NAME} -U ${DATABASE_USER} -c "drop schema public cascade;"
@@ -10,9 +12,6 @@ set -x
 
 echo Apply migrations
 python manage.py migrate --noinput
-
-echo Collecting static files
-python manage.py collectstatic --no-input
 
 # echo Load initial data
 # python manage.py loaddata initial_data

@@ -24,7 +24,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 USE_TZ = True
 TIME_ZONE = "Europe/Amsterdam"
 USE_L10N = True
-USE_I18N = False
+USE_I18N = True
 LANGUAGE_CODE = "nl-NL"
 LANGUAGES = [("nl", "Dutch")]
 
@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     "rest_framework.authtoken",
     "rest_framework_gis",
     "drf_spectacular",
+    "webpack_loader",
     "django_filters",
     "corsheaders",
     "django_extensions",
@@ -70,6 +71,7 @@ INSTALLED_APPS = (
     # Apps
     "apps.authenticatie",
     "apps.health",
+    "apps.feedback",
 )
 
 
@@ -108,6 +110,17 @@ PERMISSIONS_POLICY = {
     "payment": [],
     "usb": [],
 }
+
+STATICFILES_DIRS = (
+    [
+        "/app/frontend/public/build/",
+    ]
+    if DEBUG
+    else []
+)
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 Mb limit
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 Mb limit
 
 
 STATIC_URL = "/static/"
@@ -165,6 +178,9 @@ AUTH_USER_MODEL = "authenticatie.Gebruiker"
 SITE_ID = 1
 SITE_NAME = os.getenv("SITE_NAME", "MOR Feedback")
 SITE_DOMAIN = os.getenv("SITE_DOMAIN", "localhost")
+
+SECRET_HASH_KEY = os.getenv("SECRET_HASH_KEY", "")
+
 
 # Django REST framework settings
 REST_FRAMEWORK = dict(
@@ -271,6 +287,7 @@ TEMPLATES = [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.static",
                 "django.template.context_processors.request",
+                "config.context_processors.general_settings",
             ],
         },
     }
@@ -305,6 +322,21 @@ SESSION_EXPIRE_SECONDS = int(os.getenv("SESSION_EXPIRE_SECONDS", "3600"))
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = int(
     os.getenv("SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD", "1800")
 )
+
+# Frontend tools for development
+# Autoreload socket port
+DEV_SOCKET_PORT = os.getenv("DEV_SOCKET_PORT", "9000")
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "CACHE": not DEBUG,
+        "POLL_INTERVAL": 0.1,
+        "IGNORE": [r".+\.hot-update.js", r".+\.map"],
+        "LOADER_CLASS": "webpack_loader.loader.WebpackLoader",
+        "STATS_FILE": "/static/webpack-stats.json"
+        if not DEBUG
+        else "/app/frontend/public/build/webpack-stats.json",
+    }
+}
 
 
 LOG_LEVEL = "DEBUG" if DEBUG else "INFO"
@@ -409,3 +441,4 @@ if OPENID_CONFIG and OIDC_RP_CLIENT_ID:
     LOGIN_REDIRECT_URL_FAILURE = "/"
     LOGOUT_REDIRECT_URL = OIDC_OP_LOGOUT_ENDPOINT
     LOGIN_URL = "/oidc/authenticate/"
+    
