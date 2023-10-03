@@ -60,5 +60,3 @@ create_app:
 	@read -p "Enter the name of the new app: " app_name; \
 	mkdir -p app/apps/$$app_name; \
 	$(EXEC_IN_WEB_CMD) startapp $$app_name apps/$$app_name
-
-

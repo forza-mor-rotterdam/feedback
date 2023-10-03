@@ -34,3 +34,7 @@ Faker==8.13.2
 
 # tests
 requests_mock
+
+# monitoring
+django-prometheus
+prometheus-client

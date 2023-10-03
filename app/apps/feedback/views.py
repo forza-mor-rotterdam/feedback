@@ -1,75 +1,102 @@
 import hashlib
 import logging
 
+import prometheus_client
+from apps.feedback.metrics_collectors import FeedbackCollector
 from django.conf import settings
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.files.storage import default_storage
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.http import HttpResponse, HttpResponseServerError
+from django.shortcuts import render
+from django.utils import timezone
 from django.views import View
-from django.http import HttpResponse
+
 from .models import Feedback
 
 logger = logging.getLogger(__name__)
 
 
-def http_404(request):
-    return render(
-        request,
-        "404.html",
-    )
+def custom_404_view(request):
+    return render(request, "404.html", status=404)
 
 
-def http_500(request):
-    return render(
-        request,
-        "500.html",
-    )
+def custom_500_view(request):
+    return render(request, "500.html", status=500)
 
 
 class FeedbackView(View):
-    template_name_exists = "feedback/bestaand.html"
-    template_name_new = "feedback/nieuw.html"
+    template = "feedback/bedankt.html"
 
     def get(
-        self, request, meldr_nummer: str, meldr_hash: str, feedback_type: int
+        self,
+        request,
+        meldr_nummer: str,
+        meldr_hash: str,
+        meldr_feedback_type: int,
     ):
         try:
-            verwachte_hash = hashlib.sha256((meldr_nummer + settings.SECRET_HASH_KEY).encode()).hexdigest()
+            # Vergelijk hashes
+            verwachte_hash = hashlib.sha256(
+                (meldr_nummer + settings.SECRET_HASH_KEY).encode()
+            ).hexdigest()
             if verwachte_hash != meldr_hash:
-                return HttpResponse(
-                    "De hash komt niet overeen met de verwachte waarde."
+                logger.error("Feedback hashes don't match")
+                return HttpResponseServerError(
+                    "De hash komt niet overeen met de verwachte waarde.",
+                    status=500,
                 )
 
-            if bestaande_feedback := Feedback.objects.filter(
-                meldr_nummer=meldr_nummer
-            ).first():
-                context = {
-                    "feedback": bestaande_feedback,
-                }
-                return render(request, self.template_name_exists, context)
+            # Bepaal feedback_type op basis van URL parameter
+            if meldr_feedback_type == 0:
+                feedback_type = "negatief"
+            elif meldr_feedback_type == 1:
+                feedback_type = "positief"
             else:
-                # No feedback entry with the same meldr_num found, create a new one
-                # Determine the feedback type based on the URL parameter
-                if feedback_type == 0:
-                    feedback_type = "negatief"
-                elif feedback_type == 1:
-                    feedback_type = "positief"
-                else:
-                    # Handle an unexpected value for feedback_type
-                    return HttpResponse("Ongeldige waarde voor feedback_type.")
-
-                # Create a new feedback object
-                nieuwe_feedback = Feedback(
-                    meldr_nummer=meldr_nummer, feedback_type=feedback_type
+                logger.error(
+                    f"Incorrect value for meldr_feedback_type: {meldr_feedback_type}"
                 )
-                nieuwe_feedback.save()
-                context = {"feedback": nieuwe_feedback}
-                return render(request, self.template_name_new, context)
+                return HttpResponseServerError(
+                    f"Ongeldige waarde voor meldr_feedback_type: {meldr_feedback_type}.",
+                    status=500,
+                )
+            # Update of create Feedback object
+            feedback, _created = Feedback.objects.update_or_create(
+                meldr_nummer=meldr_nummer,
+                defaults={
+                    "feedback_type": feedback_type,
+                    "update_datum": timezone.now(),
+                },
+            )
+            feedback.save()
+            context = {"feedback": feedback}
+            return render(request, self.template, context)
 
         except Exception as e:
-            # Handle unexpected errors
+            # Afhandelen onverwachte errors
             logger.error(f"An error occurred: {str(e)}")
-            return HttpResponse(
-                "Er is een fout opgetreden bij het verwerken van uw verzoek."
+            return HttpResponseServerError(
+                "Er is een fout opgetreden bij het verwerken van uw verzoek.",
+                status=500,
             )
+
+
+class FeedbackMetricsView(View):
+    def get(self, request):
+        try:
+            registry = prometheus_client.CollectorRegistry()
+            registry.register(FeedbackCollector())
+            metrics_page = prometheus_client.generate_latest(registry)
+            return HttpResponse(
+                metrics_page,
+                content_type=prometheus_client.CONTENT_TYPE_LATEST,
+            )
+        except Exception as e:
+            # Afhandelen onverwachte errors
+            logger.error(f"An error occurred: {str(e)}")
+            return HttpResponseServerError(
+                "Er is een fout opgetreden bij het ophalen van de metrics.",
+                status=500,
+            )
+
+
+# Gebruik custom error handlers
+handler404 = "apps.views.custom_404_view"
+handler500 = "apps.views.custom_500_view"

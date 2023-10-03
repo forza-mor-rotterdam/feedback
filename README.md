@@ -44,7 +44,7 @@ Use the Makefile command:
 ~~~
     make run_frontend
 ~~~
-or in terminal go to 'app/frontend' and start front-end and watcher by typing 
+or in terminal go to 'app/frontend' and start front-end and watcher by typing
 ~~~bash
     npm install
     npm run watch

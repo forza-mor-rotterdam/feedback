@@ -7,21 +7,35 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Feedback',
+            name="Feedback",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('meldr_nummer', models.CharField(max_length=20)),
-                ('feedback_type', models.CharField(choices=[('positief', 'Positief'), ('negatief', 'Negatief')], default='negatief', max_length=10)),
-                ('aanmaakdatum', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("meldr_nummer", models.CharField(max_length=20)),
+                (
+                    "feedback_type",
+                    models.CharField(
+                        choices=[("positief", "Positief"), ("negatief", "Negatief")],
+                        default="negatief",
+                        max_length=10,
+                    ),
+                ),
+                ("aanmaakdatum", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'verbose_name_plural': 'Feedback',
-                'ordering': ('aanmaakdatum',),
+                "verbose_name_plural": "Feedback",
+                "ordering": ("aanmaakdatum",),
             },
         ),
     ]

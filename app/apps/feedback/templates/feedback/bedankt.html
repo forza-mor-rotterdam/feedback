@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Dank voor uw reactie!</h1>  
+    <h4>
+    {% if feedback.feedback_type == 'positief' %}
+        We nemen uw positieve feedback mee.
+    {% elif feedback.feedback_type == 'negatief'%}
+        We gaan met uw negatieve feedback aan de slag!
+    {% endif %} 
+    <br/>
+    U helpt ons hiermee om onze dienstverlening te verbeteren.</h4>
+
+    <div class="card-group">
+        <div class="card">
+            <div class="card-body">
+                {% if feedback.meldr_nummer %}
+                    <h5 class="card-title">Uw meldingsnummer was: {{feedback.meldr_nummer}}</h5>
+                {% endif %}
+                <p>Moeten straten, pleinen of parken gemaakt worden? Of moet er opgeruimd worden? Meld het.</p>
+                <a href="https://meldr.rotterdam.nl/" class="btn btn-action">Nog een melding buitenruimte doen</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bent u niet tevreden over de werkwijze van de gemeente Rotterdam?</h5>
+                <p>Geef antwoord op de vragen op deze pagina en dien een klacht in.</p>
+                <a href="https://www.rotterdam.nl/melding-vraag-of-klacht" class="btn btn-action">Dien een klacht in</a>
+            </div>
+        </div>
+    </div>
+
+    {% if DEBUG and feedback.aanmaakdatum %}
+    <h5>Extra developer info</h5>
+    <p>
+        Aangemaakt op {{ feedback.aanmaakdatum|date:"j F Y H:i" }}.<br/>
+        Laatste update op {{ feedback.update_datum|date:"j F Y H:i" }}.<br/>
+        Feedback was {{feedback.feedback_type}}.
+    </p>
+    {% endif %}
+
+{% endblock %}

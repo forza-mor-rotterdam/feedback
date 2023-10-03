@@ -63,7 +63,7 @@ RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r /requirements.txt \
     && rm -rf /root/.cache/pip
 
-# Copy the application code 
+# Copy the application code
 COPY . /app/
 
 # Copy static files from the Node.js build stage
