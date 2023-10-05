@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>Dank voor uw reactie!</h1>  
+    <h1>Dank voor uw reactie!</h1>
     <h4>
     {% if feedback.feedback_type == 'positief' %}
         We nemen uw positieve feedback mee.
     {% elif feedback.feedback_type == 'negatief'%}
         We gaan met uw negatieve feedback aan de slag!
-    {% endif %} 
+    {% endif %}
     <br/>
     U helpt ons hiermee om onze dienstverlening te verbeteren.</h4>
 
