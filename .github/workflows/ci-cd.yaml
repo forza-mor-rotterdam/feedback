@@ -44,6 +44,7 @@ jobs:
   deploy-acc:
     name: Acceptance release
     if: github.ref == 'refs/heads/develop'
+    environment: acc
     needs: docker-build-and-test
     runs-on: ubuntu-latest
     permissions:
