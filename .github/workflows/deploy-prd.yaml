@@ -11,10 +11,10 @@ env:
 jobs:
   apps:
     runs-on: ubuntu-latest
+    environment: prod
     permissions:
       contents: read
       packages: write
-
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
