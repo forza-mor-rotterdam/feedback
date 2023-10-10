@@ -1,4 +1,4 @@
-# PlanR
+# Feedback
 Voor het verwerken van Feedback van MOR na het klikken van een duimpje in een MeldR email. Geeft metrics door aan Grafana.
 
 ## Tech Stack
