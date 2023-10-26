@@ -16,6 +16,11 @@ run_and_build: ## Build and then start the stack
 	@echo Building containers and running from file. './docker-compose.yml.'
 	docker-compose up --build
 
+run_frontend:
+	cd app/frontend && \
+	npm install && \
+	npm run watch
+
 stop: ## Stop containers
 	@echo Stopping containers.
 	docker-compose down
@@ -35,6 +40,10 @@ check_clean_db: ## clear docker vols
 format: ## Use pre-commit config to format files
 	pre-commit run --all-files
 
+create_docker_networks:
+	docker network create feedback_network && \
+    docker network create mor_bridge_network
+
 # Static files
 ##############################################
 
@@ -46,3 +55,14 @@ makemigrations: ## Makemigrations
 
 migrate: ## Migrate
 	$(EXEC_IN_WEB_CMD) migrate
+
+create_app:
+	@read -p "Enter the name of the new app: " app_name; \
+	mkdir -p app/apps/$$app_name; \
+	$(EXEC_IN_WEB_CMD) startapp $$app_name apps/$$app_name
+
+# Tests
+##############################################
+
+run_tests:
+	$(EXEC_IN_WEB_CMD) test

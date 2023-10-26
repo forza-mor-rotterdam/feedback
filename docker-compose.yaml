@@ -38,7 +38,7 @@ services:
     image: postgis/postgis:11-3.3
     shm_size: '1024m'
     ports:
-      - "6006:5432"
+      - "5432"
     env_file:
       - .env.local
     volumes:
@@ -52,36 +52,6 @@ services:
       - feedback_network
     ports:
       - "6379"
-
-  app_celery_worker:
-    build: ./app
-    container_name: feedback_celery_worker
-    command: "celery -A config worker -l info"
-    depends_on:
-      database:
-        condition: service_started
-      redis:
-        condition: service_started
-    env_file:
-      - .env.local
-    networks:
-      - feedback_network
-      - mor_bridge_network
-
-  app_celery_beat:
-    build: ./app
-    container_name: feedback_celery_beat
-    command: "celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
-    depends_on:
-      database:
-        condition: service_started
-      redis:
-        condition: service_started
-    env_file:
-      - .env.local
-    networks:
-      - feedback_network
-      - mor_bridge_network
 
 volumes:
   postgres-data:
