@@ -15,7 +15,6 @@ class FeedbackCollector(object):
             .values("feedback_type")
             .annotate(count=Count("feedback_type"))
         )
-        print(feedbacken)
         for m in feedbacken:
             c.add_metric(
                 [
@@ -23,5 +22,4 @@ class FeedbackCollector(object):
                 ],
                 m.get("count"),
             )
-        print(f"=== {c} ===")
         yield c
