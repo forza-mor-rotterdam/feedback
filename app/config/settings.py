@@ -24,7 +24,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 USE_TZ = True
 TIME_ZONE = "Europe/Amsterdam"
 USE_L10N = True
-USE_I18N = False
+USE_I18N = True
 LANGUAGE_CODE = "nl-NL"
 LANGUAGES = [("nl", "Dutch")]
 
@@ -53,8 +53,8 @@ INSTALLED_APPS = (
     "django.contrib.postgres",
     "rest_framework",
     "rest_framework.authtoken",
-    "rest_framework_gis",
     "drf_spectacular",
+    "webpack_loader",
     "django_filters",
     "corsheaders",
     "django_extensions",
@@ -63,13 +63,11 @@ INSTALLED_APPS = (
     "health_check.db",
     "health_check.cache",
     "health_check.contrib.migrations",
-    "health_check.contrib.celery_ping",
     "debug_toolbar",
-    "django_celery_beat",
-    "django_celery_results",
     # Apps
     "apps.authenticatie",
     "apps.health",
+    "apps.feedback",
 )
 
 
@@ -109,6 +107,17 @@ PERMISSIONS_POLICY = {
     "usb": [],
 }
 
+STATICFILES_DIRS = (
+    [
+        "/app/frontend/public/build/",
+    ]
+    if DEBUG
+    else []
+)
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 Mb limit
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 Mb limit
+
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.normpath(join(os.path.dirname(BASE_DIR), "static"))
@@ -125,7 +134,7 @@ DATABASE_HOST = os.getenv("DATABASE_HOST_OVERRIDE")
 DATABASE_PORT = os.getenv("DATABASE_PORT_OVERRIDE")
 
 DEFAULT_DATABASE = {
-    "ENGINE": "django.contrib.gis.db.backends.postgis",
+    "ENGINE": "django.db.backends.postgresql",
     "NAME": DATABASE_NAME,  # noqa:
     "USER": DATABASE_USER,  # noqa
     "PASSWORD": DATABASE_PASSWORD,  # noqa
@@ -144,18 +153,8 @@ DATABASES.update(
     else {}
 )
 
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_BROKER_URL = "redis://redis:6379/0"
 
-BROKER_URL = CELERY_BROKER_URL
-CELERY_TASK_TRACK_STARTED = True
-CELERY_RESULT_BACKEND = "django-db"
-CELERY_TASK_TIME_LIMIT = 30 * 60
-
-
-if ENVIRONMENT == "test":
-    DJANGO_TEST_USERNAME = os.getenv("DJANGO_TEST_USERNAME", "test")
+if ENVIRONMENT in ["test", "development"]:
     DJANGO_TEST_EMAIL = os.getenv("DJANGO_TEST_EMAIL", "test@test.com")
     DJANGO_TEST_PASSWORD = os.getenv("DJANGO_TEST_PASSWORD", "insecure")
 
@@ -165,6 +164,9 @@ AUTH_USER_MODEL = "authenticatie.Gebruiker"
 SITE_ID = 1
 SITE_NAME = os.getenv("SITE_NAME", "MOR Feedback")
 SITE_DOMAIN = os.getenv("SITE_DOMAIN", "localhost")
+
+SECRET_HASH_KEY = os.getenv("SECRET_HASH_KEY", "")
+
 
 # Django REST framework settings
 REST_FRAMEWORK = dict(
@@ -271,6 +273,7 @@ TEMPLATES = [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.static",
                 "django.template.context_processors.request",
+                "config.context_processors.general_settings",
             ],
         },
     }
@@ -306,6 +309,21 @@ SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = int(
     os.getenv("SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD", "1800")
 )
 
+# Frontend tools for development
+# Autoreload socket port
+DEV_SOCKET_PORT = os.getenv("DEV_SOCKET_PORT", "9000")
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "CACHE": not DEBUG,
+        "POLL_INTERVAL": 0.1,
+        "IGNORE": [r".+\.hot-update.js", r".+\.map"],
+        "LOADER_CLASS": "webpack_loader.loader.WebpackLoader",
+        "STATS_FILE": "/static/webpack-stats.json"
+        if not DEBUG
+        else "/app/frontend/public/build/webpack-stats.json",
+    }
+}
+
 
 LOG_LEVEL = "DEBUG" if DEBUG else "INFO"
 LOGGING = {
@@ -335,10 +353,6 @@ LOGGING = {
             "handlers": ["console"],
             "level": LOG_LEVEL,
             "propagate": True,
-        },
-        "celery": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
         },
     },
 }

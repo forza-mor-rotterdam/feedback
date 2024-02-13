@@ -1,36 +1,31 @@
+from apps.feedback.views import (
+    FeedbackMetricsView,
+    FeedbackView,
+    custom_404_view,
+    custom_500_view,
+)
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
 from django_db_schema_renderer.urls import schema_urls
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularRedocView,
-    SpectacularSwaggerView,
-)
-from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 
 urlpatterns = [
-    path("api/v1/", include((router.urls, "app"), namespace="v1")),
-    path("api-token-auth/", views.obtain_auth_token),
+    path("metrics/", FeedbackMetricsView.as_view(), name="prometheus_metrics"),
     path("admin/", admin.site.urls),
+    # URL pattern for https://feedback.forzamor.nl/vertel-het-ons/{meldr-nummer}/{hash}/1
+    path(
+        "vertel-het-ons/<str:meldr_nummer>/<str:meldr_hash>/<int:meldr_feedback_type>/",
+        FeedbackView.as_view(),
+        name="feedback",
+    ),
     path("health/", include("health_check.urls")),
     path("db-schema/", include((schema_urls, "db-schema"))),
     path("plate/", include("django_spaghetti.urls")),
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path(
-        "api/schema/swagger-ui/",
-        SpectacularSwaggerView.as_view(url_name="schema"),
-        name="swagger-ui",
-    ),
-    path(
-        "api/schema/redoc/",
-        SpectacularRedocView.as_view(url_name="schema"),
-        name="redoc",
-    ),
 ]
 
 if settings.OPENID_CONFIG and settings.OIDC_RP_CLIENT_ID:
@@ -56,5 +51,8 @@ if settings.OPENID_CONFIG and settings.OIDC_RP_CLIENT_ID:
 
 if settings.DEBUG:
     urlpatterns += [
+        path("404/", custom_404_view, name="404"),
+        path("500/", custom_500_view, name="500"),
         path("__debug__/", include("debug_toolbar.urls")),
     ]
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
