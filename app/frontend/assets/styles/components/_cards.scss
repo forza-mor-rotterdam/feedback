@@ -8,69 +8,69 @@ $card-img-overlay-padding: 1rem;
 $card-group-margin: 2rem;
 
 .card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 0; // See https://github.com/twbs/bootstrap/pull/22740#issuecomment-305868106
-  height: $card-height;
-  word-wrap: break-word;
-  background-color: $light;
-  background-clip: border-box;
-  border: $card-border-width solid $card-border-color;
-  border-radius: $border-radius;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0; // See https://github.com/twbs/bootstrap/pull/22740#issuecomment-305868106
+    height: $card-height;
+    word-wrap: break-word;
+    background-color: $light;
+    background-clip: border-box;
+    border: $card-border-width solid $card-border-color;
+    border-radius: $border-radius;
 
-  > hr {
-    margin-right: 0;
-    margin-left: 0;
-  }
-
-  > .list-group {
-    border-top: inherit;
-    border-bottom: inherit;
-
-    &:first-child {
-      border-top-width: 0;
-      border-radius: $border-radius;
+    > hr {
+        margin-right: 0;
+        margin-left: 0;
     }
 
-    &:last-child {
-      border-bottom-width: 0;
-      border-radius: $border-radius;
+    > .list-group {
+        border-top: inherit;
+        border-bottom: inherit;
+
+        &:first-child {
+            border-top-width: 0;
+            border-radius: $border-radius;
+        }
+
+        &:last-child {
+            border-bottom-width: 0;
+            border-radius: $border-radius;
+        }
     }
-  }
 }
 
 .card-body {
-  // Enable `flex-grow: 1` for decks and groups so that card blocks take up
-  // as much space as possible, ensuring footers are aligned to the bottom.
-  flex: 1 1 auto;
-  // Workaround for the image size bug in IE
-  // See: https://github.com/twbs/bootstrap/pull/28855
-  min-height: 1px;
-  padding: 8px;
-  color: $dark;
+    // Enable `flex-grow: 1` for decks and groups so that card blocks take up
+    // as much space as possible, ensuring footers are aligned to the bottom.
+    flex: 1 1 auto;
+    // Workaround for the image size bug in IE
+    // See: https://github.com/twbs/bootstrap/pull/28855
+    min-height: 1px;
+    padding: 8px;
+    color: $dark;
 }
 
 .card-title {
-  margin-bottom: $card-spacer-y;
+    margin-bottom: $card-spacer-y;
 }
 
 .card-subtitle {
-  margin-top: -$card-spacer-y / 2;
-  margin-bottom: 0;
+    margin-top: -$card-spacer-y / 2;
+    margin-bottom: 0;
 }
 
 .card-text:last-child {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .card-link {
-  &:hover {
-    text-decoration: none;
-  }
-  + .card-link {
-    margin-left: $card-spacer-x;
-  }
+    &:hover {
+        text-decoration: none;
+    }
+    + .card-link {
+        margin-left: $card-spacer-x;
+    }
 }
 
 //
@@ -78,32 +78,32 @@ $card-group-margin: 2rem;
 //
 
 .card-header {
-  padding: $card-spacer-y $card-spacer-x;
-  margin-bottom: 0; // Removes the default margin-bottom of <hN>
-  color: $card-cap-color;
-  background-color: $card-cap-bg;
-  border-bottom: $card-border-width solid $card-border-color;
+    padding: $card-spacer-y $card-spacer-x;
+    margin-bottom: 0; // Removes the default margin-bottom of <hN>
+    color: $card-cap-color;
+    background-color: $card-cap-bg;
+    border-bottom: $card-border-width solid $card-border-color;
 
-  &:first-child {
-    border-radius: $border-radius $border-radius 0 0;
-  }
-
-  + .list-group {
-    .list-group-item:first-child {
-      border-top: 0;
+    &:first-child {
+        border-radius: $border-radius $border-radius 0 0;
     }
-  }
+
+    + .list-group {
+        .list-group-item:first-child {
+            border-top: 0;
+        }
+    }
 }
 
 .card-footer {
-  padding: $card-spacer-y $card-spacer-x;
-  color: $card-cap-color;
-  background-color: $card-cap-bg;
-  border-top: $card-border-width solid $card-border-color;
+    padding: $card-spacer-y $card-spacer-x;
+    color: $card-cap-color;
+    background-color: $card-cap-bg;
+    border-top: $card-border-width solid $card-border-color;
 
-  &:last-child {
-    border-radius: 0 0 $border-radius $border-radius;
-  }
+    &:last-child {
+        border-radius: 0 0 $border-radius $border-radius;
+    }
 }
 
 //
@@ -111,44 +111,44 @@ $card-group-margin: 2rem;
 //
 
 .card-header-tabs {
-  margin-right: -$card-spacer-x / 2;
-  margin-bottom: -$card-spacer-y;
-  margin-left: -$card-spacer-x / 2;
-  border-bottom: 0;
+    margin-right: -$card-spacer-x / 2;
+    margin-bottom: -$card-spacer-y;
+    margin-left: -$card-spacer-x / 2;
+    border-bottom: 0;
 }
 
 .card-header-pills {
-  margin-right: -$card-spacer-x / 2;
-  margin-left: -$card-spacer-x / 2;
+    margin-right: -$card-spacer-x / 2;
+    margin-left: -$card-spacer-x / 2;
 }
 
 // Card image
 .card-img-overlay {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: $card-img-overlay-padding;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: $card-img-overlay-padding;
 }
 
 .card-img,
 .card-img-top,
 .card-img-bottom {
-  flex-shrink: 0; // For IE: https://github.com/twbs/bootstrap/issues/29396
-  width: 100%; // Required because we use flexbox and this inherently applies align-self: stretch
+    flex-shrink: 0; // For IE: https://github.com/twbs/bootstrap/issues/29396
+    width: 100%; // Required because we use flexbox and this inherently applies align-self: stretch
 }
 
 .card-img,
 .card-img-top {
-  border-top-left-radius: $border-radius;
-  border-top-right-radius: $border-radius;
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
 }
 
 .card-img,
 .card-img-bottom {
-  border-bottom-right-radius: $border-radius;
-  border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
 }
 
 //
@@ -156,9 +156,9 @@ $card-group-margin: 2rem;
 //
 
 .card-group {
-  // The child selector allows nested `.card` within `.card-group`
-  // to display properly.
-  > .card {
-    margin-bottom: $card-group-margin;
-  }
+    // The child selector allows nested `.card` within `.card-group`
+    // to display properly.
+    > .card {
+        margin-bottom: $card-group-margin;
+    }
 }
