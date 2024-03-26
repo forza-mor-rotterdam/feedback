@@ -43,6 +43,7 @@ TOKEN_API_RELATIVE_URL = os.getenv("TOKEN_API_RELATIVE_URL", "/api-token-auth/")
 MELDINGEN_TOKEN_TIMEOUT = 60 * 5
 
 INSTALLED_APPS = (
+    "apps.health",
     "django_db_schema_renderer",
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
@@ -68,7 +69,6 @@ INSTALLED_APPS = (
     "debug_toolbar",
     # Apps
     "apps.authenticatie",
-    "apps.health",
     "apps.feedback",
 )
 
@@ -320,9 +320,11 @@ WEBPACK_LOADER = {
         "POLL_INTERVAL": 0.1,
         "IGNORE": [r".+\.hot-update.js", r".+\.map"],
         "LOADER_CLASS": "webpack_loader.loader.WebpackLoader",
-        "STATS_FILE": "/static/webpack-stats.json"
-        if not DEBUG
-        else "/app/frontend/public/build/webpack-stats.json",
+        "STATS_FILE": (
+            "/static/webpack-stats.json"
+            if not DEBUG
+            else "/app/frontend/public/build/webpack-stats.json"
+        ),
     }
 }
 
