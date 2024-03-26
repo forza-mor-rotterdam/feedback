@@ -88,4 +88,9 @@ RUN chmod -R +x /app/deploy
 # Switch to the non-root user
 USER $APP_USER
 
+ARG GIT_SHA
+ENV GIT_SHA=$GIT_SHA
+ARG DEPLOY_DATE
+ENV DEPLOY_DATE=$DEPLOY_DATE
+
 CMD ["bash", "/app/deploy/docker-entrypoint.sh"]
