@@ -27,8 +27,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
-      redis:
-        condition: service_started
     networks:
       - feedback_network
       - mor_bridge_network
@@ -50,13 +48,6 @@ services:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - feedback_network
-
-  redis:
-    image: redis
-    networks:
-      - feedback_network
-    ports:
-      - "6379"
 
 volumes:
   postgres-data:

@@ -282,21 +282,6 @@ TEMPLATES = [
 ]
 
 
-# Cache settings
-REDIS_URL = "redis://redis:6379"
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "SOCKET_CONNECT_TIMEOUT": 5,
-            "SOCKET_TIMEOUT": 5,
-        },
-    }
-}
-
-
 # Sessions are managed by django-session-timeout-joinup
 # Django session settings
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
