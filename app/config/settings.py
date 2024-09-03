@@ -15,6 +15,8 @@ TRUE_VALUES = [True, "True", "true", "1"]
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", os.environ.get("DJANGO_SECRET_KEY"))
 
+GIT_SHA = os.getenv("GIT_SHA")
+DEPLOY_DATE = os.getenv("DEPLOY_DATE", "")
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 DEBUG = ENVIRONMENT == "development"
 
@@ -41,6 +43,7 @@ TOKEN_API_RELATIVE_URL = os.getenv("TOKEN_API_RELATIVE_URL", "/api-token-auth/")
 MELDINGEN_TOKEN_TIMEOUT = 60 * 5
 
 INSTALLED_APPS = (
+    "apps.health",
     "django_db_schema_renderer",
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
@@ -60,13 +63,12 @@ INSTALLED_APPS = (
     "django_extensions",
     "django_spaghetti",
     "health_check",
-    "health_check.db",
     "health_check.cache",
+    "health_check.db",
     "health_check.contrib.migrations",
     "debug_toolbar",
     # Apps
     "apps.authenticatie",
-    "apps.health",
     "apps.feedback",
 )
 
@@ -280,21 +282,6 @@ TEMPLATES = [
 ]
 
 
-# Cache settings
-REDIS_URL = "redis://redis:6379"
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "SOCKET_CONNECT_TIMEOUT": 5,
-            "SOCKET_TIMEOUT": 5,
-        },
-    }
-}
-
-
 # Sessions are managed by django-session-timeout-joinup
 # Django session settings
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
@@ -318,9 +305,11 @@ WEBPACK_LOADER = {
         "POLL_INTERVAL": 0.1,
         "IGNORE": [r".+\.hot-update.js", r".+\.map"],
         "LOADER_CLASS": "webpack_loader.loader.WebpackLoader",
-        "STATS_FILE": "/static/webpack-stats.json"
-        if not DEBUG
-        else "/app/frontend/public/build/webpack-stats.json",
+        "STATS_FILE": (
+            "/static/webpack-stats.json"
+            if not DEBUG
+            else "/app/frontend/public/build/webpack-stats.json"
+        ),
     }
 }
 

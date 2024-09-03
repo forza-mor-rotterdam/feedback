@@ -26,9 +26,7 @@ services:
       - ./app:/app
     depends_on:
       database:
-        condition: service_started
-      redis:
-        condition: service_started
+        condition: service_healthy
     networks:
       - feedback_network
       - mor_bridge_network
@@ -41,17 +39,15 @@ services:
       - "5432"
     env_file:
       - .env.local
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - feedback_network
-
-  redis:
-    image: redis
-    networks:
-      - feedback_network
-    ports:
-      - "6379"
 
 volumes:
   postgres-data:

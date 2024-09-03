@@ -11,14 +11,6 @@ services:
         condition: service_healthy
     networks:
       - feedback_network
-
-  redis:
-    image: redis
-    networks:
-      - feedback_network
-    ports:
-      - "6379"
-
   database:
     image: postgis/postgis:11-3.3
     shm_size: '1024m'

@@ -4,6 +4,7 @@ from apps.feedback.views import (
     custom_404_view,
     custom_500_view,
 )
+from apps.health.views import healthz
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -24,6 +25,7 @@ urlpatterns = [
         name="feedback",
     ),
     path("health/", include("health_check.urls")),
+    path("healthz/", healthz, name="healthz"),
     path("db-schema/", include((schema_urls, "db-schema"))),
     path("plate/", include("django_spaghetti.urls")),
 ]
