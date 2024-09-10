@@ -218,8 +218,8 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
-SESSION_COOKIE_NAME = "__Secure-sessionid" if not DEBUG else "sessionid"
-CSRF_COOKIE_NAME = "__Secure-csrftoken" if not DEBUG else "csrftoken"
+SESSION_COOKIE_NAME = "__Host-sessionid" if not DEBUG else "sessionid"
+CSRF_COOKIE_NAME = "__Host-csrftoken" if not DEBUG else "csrftoken"
 SESSION_COOKIE_SAMESITE = "Strict" if not DEBUG else "Lax"
 CSRF_COOKIE_SAMESITE = "Strict" if not DEBUG else "Lax"
 
