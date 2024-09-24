@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.gis",
     "django.contrib.postgres",
+    "django.forms",
     "rest_framework",
     "rest_framework.authtoken",
     "drf_spectacular",
@@ -167,7 +168,7 @@ SITE_ID = 1
 SITE_NAME = os.getenv("SITE_NAME", "MOR Feedback")
 SITE_DOMAIN = os.getenv("SITE_DOMAIN", "localhost")
 
-SECRET_HASH_KEY = os.getenv("SECRET_HASH_KEY", "")
+SECRET_HASH_KEY = os.getenv("SECRET_HASH_KEY", "hashkeyforzamorfeedback")
 
 
 # Django REST framework settings
@@ -263,6 +264,7 @@ SPAGHETTI_SAUCE = {
     "show_fields": False,
 }
 
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
