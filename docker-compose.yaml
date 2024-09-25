@@ -9,7 +9,7 @@ services:
       feedback_app:
         condition: service_started
     ports:
-      - 8007:8007
+      - 8010:8010
     networks:
       - mor_bridge_network
     env_file:

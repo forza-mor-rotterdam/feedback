@@ -3,7 +3,7 @@ services:
   app:
     build: ./app
     ports:
-      - "8007:8007"
+      - "8010:8010"
     env_file:
       - .env.test
     depends_on:
