@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
         libspatialite7 \
         libfreexl1 \
         libgeotiff-dev \
+        libpq-dev \
         libwebp6 \
         proj-bin \
         graphviz \
