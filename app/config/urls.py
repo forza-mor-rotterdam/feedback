@@ -12,14 +12,16 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 from django_db_schema_renderer.urls import schema_urls
 from rest_framework.routers import DefaultRouter
-from django.views.generic.base import RedirectView
 
 router = DefaultRouter()
 
 urlpatterns = [
     path(
         "",
-        RedirectView.as_view(url="admin/", permanent=False,),
+        RedirectView.as_view(
+            url="admin/",
+            permanent=False,
+        ),
         name="redirect-to-django-admin",
     ),
     path("metrics/", FeedbackMetricsView.as_view(), name="prometheus_metrics"),
