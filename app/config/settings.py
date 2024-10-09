@@ -5,6 +5,7 @@ import sys
 from os.path import join
 
 import requests
+import urllib3
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +55,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.gis",
     "django.contrib.postgres",
+    "django.forms",
     "rest_framework",
     "rest_framework.authtoken",
     "drf_spectacular",
@@ -167,7 +169,7 @@ SITE_ID = 1
 SITE_NAME = os.getenv("SITE_NAME", "MOR Feedback")
 SITE_DOMAIN = os.getenv("SITE_DOMAIN", "localhost")
 
-SECRET_HASH_KEY = os.getenv("SECRET_HASH_KEY", "")
+SECRET_HASH_KEY = os.getenv("SECRET_HASH_KEY", "hashkeyforzamorfeedback")
 
 
 # Django REST framework settings
@@ -218,8 +220,8 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
-SESSION_COOKIE_NAME = "__Secure-sessionid" if not DEBUG else "sessionid"
-CSRF_COOKIE_NAME = "__Secure-csrftoken" if not DEBUG else "csrftoken"
+SESSION_COOKIE_NAME = "__Host-sessionid" if not DEBUG else "sessionid"
+CSRF_COOKIE_NAME = "__Host-csrftoken" if not DEBUG else "csrftoken"
 SESSION_COOKIE_SAMESITE = "Strict" if not DEBUG else "Lax"
 CSRF_COOKIE_SAMESITE = "Strict" if not DEBUG else "Lax"
 
@@ -263,6 +265,7 @@ SPAGHETTI_SAUCE = {
     "show_fields": False,
 }
 
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -350,6 +353,8 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
+LOGIN_URL = "/login/"
+
 OIDC_RP_CLIENT_ID = os.getenv("OIDC_RP_CLIENT_ID")
 OIDC_RP_CLIENT_SECRET = os.getenv("OIDC_RP_CLIENT_SECRET")
 
@@ -361,11 +366,18 @@ OPENID_CONFIG_URI = os.getenv(
 )
 OPENID_CONFIG = {}
 try:
-    OPENID_CONFIG = requests.get(OPENID_CONFIG_URI).json()
+    OPENID_CONFIG = requests.get(
+        OPENID_CONFIG_URI,
+        headers={
+            "user-agent": urllib3.util.SKIP_HEADER,
+        },
+    ).json()
 except Exception as e:
     logger.error(f"OPENID_CONFIG FOUT, url: {OPENID_CONFIG_URI}, error: {e}")
 
+OIDC_ENABLED = False
 if OPENID_CONFIG and OIDC_RP_CLIENT_ID:
+    OIDC_ENABLED = True
     OIDC_VERIFY_SSL = os.getenv("OIDC_VERIFY_SSL", True) in TRUE_VALUES
     OIDC_USE_NONCE = os.getenv("OIDC_USE_NONCE", True) in TRUE_VALUES
 
@@ -380,9 +392,6 @@ if OPENID_CONFIG and OIDC_RP_CLIENT_ID:
     )
     OIDC_OP_JWKS_ENDPOINT = os.getenv(
         "OIDC_OP_JWKS_ENDPOINT", OPENID_CONFIG.get("jwks_uri")
-    )
-    CHECK_SESSION_IFRAME = os.getenv(
-        "CHECK_SESSION_IFRAME", OPENID_CONFIG.get("check_session_iframe")
     )
     OIDC_RP_SCOPES = os.getenv(
         "OIDC_RP_SCOPES",
@@ -401,7 +410,6 @@ if OPENID_CONFIG and OIDC_RP_CLIENT_ID:
         "apps.authenticatie.auth.OIDCAuthenticationBackend",
     ]
 
-    OIDC_OP_LOGOUT_URL_METHOD = "apps.authenticatie.views.provider_logout"
     ALLOW_LOGOUT_GET_METHOD = True
     OIDC_STORE_ID_TOKEN = True
     OIDC_RENEW_ID_TOKEN_EXPIRY_SECONDS = int(

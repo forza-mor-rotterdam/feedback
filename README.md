@@ -56,12 +56,12 @@ To only run the docker container use:
 ```
 
 This will start a webserver.
-Authorize via the Django admin: http://feedback.mor.local:8007/admin/
+Authorize via the Django admin: http://feedback.mor.local:8010/admin/
 You can login with the following credentials:
 
 - Email: admin@admin.com
 - Password: insecure
-  You can view the website on http://feedback.mor.local:8007
+  You can view the website on http://feedback.mor.local:8010
 
 ### Frontend
 

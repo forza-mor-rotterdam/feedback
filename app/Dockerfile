@@ -11,6 +11,8 @@ RUN cd /srv/web \
 FROM python:3.10.10-slim-bullseye
 
 EXPOSE 8000
+# Expose uwsgi stats interface
+EXPOSE 9191
 
 ENV APP_HOME=/app
 ENV APP_USER=appuser
@@ -39,6 +41,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
         libspatialite7 \
         libfreexl1 \
         libgeotiff-dev \
+        libpq-dev \
         libwebp6 \
         proj-bin \
         graphviz \
