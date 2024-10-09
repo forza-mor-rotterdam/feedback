@@ -16,8 +16,15 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 
 urlpatterns = [
+    path(
+        "",
+        RedirectView.as_view(
+            url="admin/",
+            permanent=False,
+        ),
+        name="redirect-to-django-admin",
+    ),
     path("metrics/", FeedbackMetricsView.as_view(), name="prometheus_metrics"),
-    path("admin/", admin.site.urls),
     # URL pattern for https://feedback.forzamor.nl/vertel-het-ons/{meldr-nummer}/{hash}/1
     path(
         "vertel-het-ons/<str:meldr_nummer>/<str:meldr_hash>/<int:meldr_feedback_type>/",
@@ -30,9 +37,8 @@ urlpatterns = [
     path("plate/", include("django_spaghetti.urls")),
 ]
 
-if settings.OPENID_CONFIG and settings.OIDC_RP_CLIENT_ID:
+if settings.OIDC_ENABLED:
     urlpatterns += [
-        path("oidc/", include("mozilla_django_oidc.urls")),
         path(
             "admin/login/",
             RedirectView.as_view(
@@ -50,6 +56,11 @@ if settings.OPENID_CONFIG and settings.OIDC_RP_CLIENT_ID:
             name="admin_logout",
         ),
     ]
+
+urlpatterns += [
+    path("admin/", admin.site.urls),
+    path("oidc/", include("mozilla_django_oidc.urls")),
+]
 
 if settings.DEBUG:
     urlpatterns += [
