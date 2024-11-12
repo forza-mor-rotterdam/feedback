@@ -29,7 +29,6 @@ def debug(request):
     logger.error("DEBUG")
     response = None
     try:
-        print(1 / 0)
         logger.error("try with template")
         response = render(request, "debug.html")
     except Exception:
