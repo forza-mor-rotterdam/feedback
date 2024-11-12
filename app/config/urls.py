@@ -3,6 +3,7 @@ from apps.feedback.views import (
     FeedbackView,
     custom_404_view,
     custom_500_view,
+    debug,
 )
 from apps.health.views import healthz
 from django.conf import settings
@@ -16,6 +17,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 
 urlpatterns = [
+    path("debug/", debug, name="debug"),
     path(
         "",
         RedirectView.as_view(

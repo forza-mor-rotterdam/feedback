@@ -22,6 +22,28 @@ def custom_500_view(request):
     return render(request, "500.html", status=500)
 
 
+def debug(request):
+    import sys
+    import traceback
+
+    response = None
+    try:
+        print("try with template")
+        response = render(request, "debug.html")
+    except Exception:
+        print("fail try with template")
+        traceback.print_exception(*sys.exc_info())
+
+    if not response:
+        try:
+            print("try no template")
+            response = HttpResponse("OK")
+        except Exception:
+            print("fail try no template")
+            traceback.print_exception(*sys.exc_info())
+    return response
+
+
 class FeedbackView(View):
     template = "feedback/bedankt.html"
 
