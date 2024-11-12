@@ -19,8 +19,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", os.environ.get("DJANGO_SECRET_K
 GIT_SHA = os.getenv("GIT_SHA")
 DEPLOY_DATE = os.getenv("DEPLOY_DATE", "")
 ENVIRONMENT = os.getenv("ENVIRONMENT")
-DEBUG = True  # ENVIRONMENT == "development"
-DEBUG_OVERRIDE = ENVIRONMENT == "development"
+DEBUG = ENVIRONMENT == "development"
 
 ROOT_URLCONF = "config.urls"
 WSGI_APPLICATION = "config.wsgi.application"
@@ -116,7 +115,7 @@ STATICFILES_DIRS = (
     [
         "/app/frontend/public/build/",
     ]
-    if DEBUG_OVERRIDE
+    if DEBUG
     else []
 )
 
@@ -219,12 +218,12 @@ CORS_ORIGIN_ALLOW_ALL = False
 USE_X_FORWARDED_HOST = True
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = not DEBUG_OVERRIDE
-CSRF_COOKIE_SECURE = not DEBUG_OVERRIDE
-SESSION_COOKIE_NAME = "__Host-sessionid" if not DEBUG_OVERRIDE else "sessionid"
-CSRF_COOKIE_NAME = "__Host-csrftoken" if not DEBUG_OVERRIDE else "csrftoken"
-SESSION_COOKIE_SAMESITE = "Strict" if not DEBUG_OVERRIDE else "Lax"
-CSRF_COOKIE_SAMESITE = "Strict" if not DEBUG_OVERRIDE else "Lax"
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_NAME = "__Host-sessionid" if not DEBUG else "sessionid"
+CSRF_COOKIE_NAME = "__Host-csrftoken" if not DEBUG else "csrftoken"
+SESSION_COOKIE_SAMESITE = "Strict" if not DEBUG else "Lax"
+CSRF_COOKIE_SAMESITE = "Strict" if not DEBUG else "Lax"
 
 # Settings for Content-Security-Policy header
 CSP_DEFAULT_SRC = ("'self'",)
@@ -305,20 +304,20 @@ SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = int(
 DEV_SOCKET_PORT = os.getenv("DEV_SOCKET_PORT", "9000")
 WEBPACK_LOADER = {
     "DEFAULT": {
-        "CACHE": not DEBUG_OVERRIDE,
+        "CACHE": not DEBUG,
         "POLL_INTERVAL": 0.1,
         "IGNORE": [r".+\.hot-update.js", r".+\.map"],
         "LOADER_CLASS": "webpack_loader.loader.WebpackLoader",
         "STATS_FILE": (
             "/static/webpack-stats.json"
-            if not DEBUG_OVERRIDE
+            if not DEBUG
             else "/app/frontend/public/build/webpack-stats.json"
         ),
     }
 }
 
 
-LOG_LEVEL = "DEBUG" if DEBUG_OVERRIDE else "INFO"
+LOG_LEVEL = "DEBUG" if DEBUG else "INFO"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

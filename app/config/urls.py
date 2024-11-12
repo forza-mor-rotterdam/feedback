@@ -64,7 +64,7 @@ urlpatterns += [
     path("oidc/", include("mozilla_django_oidc.urls")),
 ]
 
-if settings.DEBUG_OVERRIDE:
+if settings.DEBUG:
     urlpatterns += [
         path("404/", custom_404_view, name="404"),
         path("500/", custom_500_view, name="500"),
