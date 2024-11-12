@@ -26,21 +26,23 @@ def debug(request):
     import sys
     import traceback
 
+    logger.error("DEBUG")
     response = None
     try:
-        print("try with template")
+        print(1 / 0)
+        logger.error("try with template")
         response = render(request, "debug.html")
     except Exception:
-        print("fail try with template")
-        traceback.print_exception(*sys.exc_info())
+        logger.error("fail try with template")
+        logger.error(traceback.print_exception(*sys.exc_info()))
 
     if not response:
         try:
-            print("try no template")
+            logger.error("try no template")
             response = HttpResponse("OK")
         except Exception:
-            print("fail try no template")
-            traceback.print_exception(*sys.exc_info())
+            logger.error("fail try no template")
+            logger.error(traceback.print_exception(*sys.exc_info()))
     return response
 
 
