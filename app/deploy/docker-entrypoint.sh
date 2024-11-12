@@ -36,5 +36,4 @@ fi
 echo "Docker entrypoint script has completed."
 
 # Execute uWSGI with the specified configuration file
-uwsgi --ini /app/deploy/config.ini --daemonize /app/uwsgi.log
-tail -f /app/uwsgi.log
+uwsgi --ini /app/deploy/config.ini
