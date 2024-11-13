@@ -22,27 +22,8 @@ def custom_500_view(request):
     return render(request, "500.html", status=500)
 
 
-def debug(request):
-    import sys
-    import traceback
-
-    logger.error("DEBUG")
-    response = None
-    try:
-        logger.error("try with template")
-        response = render(request, "debug.html")
-    except Exception:
-        logger.error("fail try with template")
-        logger.error(traceback.print_exception(*sys.exc_info()))
-
-    if not response:
-        try:
-            logger.error("try no template")
-            response = HttpResponse("OK")
-        except Exception:
-            logger.error("fail try no template")
-            logger.error(traceback.print_exception(*sys.exc_info()))
-    return response
+def home(request):
+    return render(request, "home.html")
 
 
 class FeedbackView(View):
