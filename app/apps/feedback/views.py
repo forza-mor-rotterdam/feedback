@@ -22,6 +22,10 @@ def custom_500_view(request):
     return render(request, "500.html", status=500)
 
 
+def home(request):
+    return render(request, "home.html")
+
+
 class FeedbackView(View):
     template = "feedback/bedankt.html"
 

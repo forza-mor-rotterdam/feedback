@@ -1,8 +1,10 @@
+from apps.authenticatie.views import LoginView, LogoutView
 from apps.feedback.views import (
     FeedbackMetricsView,
     FeedbackView,
     custom_404_view,
     custom_500_view,
+    home,
 )
 from apps.health.views import healthz
 from django.conf import settings
@@ -10,19 +12,18 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
-from django_db_schema_renderer.urls import schema_urls
-from rest_framework.routers import DefaultRouter
-
-router = DefaultRouter()
 
 urlpatterns = [
+    path("", home, name="home"),
     path(
-        "",
-        RedirectView.as_view(
-            url="admin/",
-            permanent=False,
-        ),
-        name="redirect-to-django-admin",
+        "login/",
+        LoginView.as_view(),
+        name="login",
+    ),
+    path(
+        "logout/",
+        LogoutView.as_view(),
+        name="logout",
     ),
     path("metrics/", FeedbackMetricsView.as_view(), name="prometheus_metrics"),
     # URL pattern for https://feedback.forzamor.nl/vertel-het-ons/{meldr-nummer}/{hash}/1
@@ -33,33 +34,29 @@ urlpatterns = [
     ),
     path("health/", include("health_check.urls")),
     path("healthz/", healthz, name="healthz"),
-    path("db-schema/", include((schema_urls, "db-schema"))),
-    path("plate/", include("django_spaghetti.urls")),
 ]
 
-if settings.OIDC_ENABLED:
+if not settings.ENABLE_DJANGO_ADMIN_LOGIN:
     urlpatterns += [
         path(
             "admin/login/",
-            RedirectView.as_view(
-                url="/oidc/authenticate/?next=/admin/",
-                permanent=False,
-            ),
+            RedirectView.as_view(url="/login/?next=/admin/"),
             name="admin_login",
         ),
         path(
             "admin/logout/",
-            RedirectView.as_view(
-                url="/oidc/logout/?next=/admin/",
-                permanent=False,
-            ),
+            RedirectView.as_view(url="/logout/?next=/"),
             name="admin_logout",
         ),
     ]
 
+if settings.OIDC_ENABLED:
+    urlpatterns += [
+        path("oidc/", include("mozilla_django_oidc.urls")),
+    ]
+
 urlpatterns += [
     path("admin/", admin.site.urls),
-    path("oidc/", include("mozilla_django_oidc.urls")),
 ]
 
 if settings.DEBUG:

@@ -34,6 +34,8 @@ LANGUAGES = [("nl", "Dutch")]
 DEFAULT_ALLOWED_HOSTS = ".forzamor.nl,localhost,127.0.0.1"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", DEFAULT_ALLOWED_HOSTS).split(",")
 
+ENABLE_DJANGO_ADMIN_LOGIN = os.getenv("ENABLE_DJANGO_ADMIN_LOGIN", False) in TRUE_VALUES
+
 SIGNALEN_API = os.getenv("SIGNALEN_API")
 MELDING_API = os.getenv("MELDING_API")
 APPLICATIE_BASIS_URL = os.getenv("APPLICATIE_BASIS_URL")
@@ -45,7 +47,7 @@ MELDINGEN_TOKEN_TIMEOUT = 60 * 5
 
 INSTALLED_APPS = (
     "apps.health",
-    "django_db_schema_renderer",
+    "django.contrib.humanize",
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
     "django.contrib.messages",
@@ -56,14 +58,8 @@ INSTALLED_APPS = (
     "django.contrib.gis",
     "django.contrib.postgres",
     "django.forms",
-    "rest_framework",
-    "rest_framework.authtoken",
-    "drf_spectacular",
     "webpack_loader",
-    "django_filters",
     "corsheaders",
-    "django_extensions",
-    "django_spaghetti",
     "health_check",
     "health_check.cache",
     "health_check.db",
@@ -171,40 +167,6 @@ SITE_DOMAIN = os.getenv("SITE_DOMAIN", "localhost")
 
 SECRET_HASH_KEY = os.getenv("SECRET_HASH_KEY", "hashkeyforzamorfeedback")
 
-
-# Django REST framework settings
-REST_FRAMEWORK = dict(
-    PAGE_SIZE=5,
-    UNAUTHENTICATED_USER={},
-    UNAUTHENTICATED_TOKEN={},
-    DEFAULT_PAGINATION_CLASS="utils.pagination.LimitOffsetPagination",
-    DEFAULT_FILTER_BACKENDS=("django_filters.rest_framework.DjangoFilterBackend",),
-    DEFAULT_THROTTLE_RATES={
-        "nouser": os.getenv("PUBLIC_THROTTLE_RATE", "60/hour"),
-    },
-    DEFAULT_PARSER_CLASSES=[
-        "rest_framework.parsers.JSONParser",
-        "utils.parsers.NestedMultipartParser",
-        "rest_framework.parsers.FormParser",
-        "rest_framework.parsers.MultiPartParser",
-    ],
-    DEFAULT_SCHEMA_CLASS="drf_spectacular.openapi.AutoSchema",
-    # DEFAULT_PERMISSION_CLASSES=("rest_framework.permissions.IsAuthenticated",),
-    # DEFAULT_AUTHENTICATION_CLASSES=(
-    #     "rest_framework.authentication.TokenAuthentication",
-    # ),
-)
-
-handler500 = "rest_framework.exceptions.server_error"
-handler400 = "rest_framework.exceptions.bad_request"
-
-SPECTACULAR_SETTINGS = {
-    "TITLE": "MOR Feedback",
-    "DESCRIPTION": "Voor het verwerken van Feedback voor Meldingen Openbare Ruimte",
-    "VERSION": "0.1.0",
-    "SERVE_INCLUDE_SCHEMA": False,
-}
-
 # Django security settings
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_REFERRER_POLICY = "strict-origin"
@@ -258,13 +220,6 @@ CSP_FONT_SRC = (
     "fonts.gstatic.com",
 )
 
-SPAGHETTI_SAUCE = {
-    "apps": [
-        "meldingen",
-    ],
-    "show_fields": False,
-}
-
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 TEMPLATES = [
     {
@@ -283,7 +238,6 @@ TEMPLATES = [
         },
     }
 ]
-
 
 # Sessions are managed by django-session-timeout-joinup
 # Django session settings
@@ -316,8 +270,8 @@ WEBPACK_LOADER = {
     }
 }
 
-
 LOG_LEVEL = "DEBUG" if DEBUG else "INFO"
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -353,8 +307,6 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
-LOGIN_URL = "/login/"
-
 OIDC_RP_CLIENT_ID = os.getenv("OIDC_RP_CLIENT_ID")
 OIDC_RP_CLIENT_SECRET = os.getenv("OIDC_RP_CLIENT_SECRET")
 
@@ -374,7 +326,6 @@ try:
     ).json()
 except Exception as e:
     logger.error(f"OPENID_CONFIG FOUT, url: {OPENID_CONFIG_URI}, error: {e}")
-
 OIDC_ENABLED = False
 if OPENID_CONFIG and OIDC_RP_CLIENT_ID:
     OIDC_ENABLED = True
